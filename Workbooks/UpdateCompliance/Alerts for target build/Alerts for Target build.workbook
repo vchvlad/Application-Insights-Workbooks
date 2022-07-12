@@ -13,7 +13,7 @@
             "label": "subscription",
             "type": 6,
             "isRequired": true,
-            "value": "",
+            "value": "/subscriptions/15820d8b-8b26-4182-8db6-7bd2be4491f6",
             "isHiddenWhenLocked": true,
             "typeSettings": {
               "additionalResourceOptions": [],
@@ -35,7 +35,7 @@
             "crossComponentResources": [
               "{mappedSubscription}"
             ],
-            "value": "",
+            "value": "/subscriptions/15820d8b-8b26-4182-8db6-7bd2be4491f6/resourceGroups/EdpTest2/providers/Microsoft.OperationalInsights/workspaces/OMS-UC-Test",
             "isHiddenWhenLocked": true,
             "typeSettings": {
               "additionalResourceOptions": [],
@@ -94,7 +94,7 @@
             "description": "Set alerts for this Target Build",
             "isRequired": true,
             "isHiddenWhenLocked": true,
-            "value": "10.0.18363.1556"
+            "value": "10.0.19043.1766"
           },
           {
             "version": "KqlParameterItem/1.0",
@@ -105,7 +105,7 @@
             "isRequired": true,
             "isHiddenWhenLocked": true,
             "id": "48dc0814-6eb8-4083-bdcd-54caee036b9b",
-            "value": "Windows 10, version 1909"
+            "value": "Windows 10, version 21H1"
           },
           {
             "version": "KqlParameterItem/1.0",
@@ -116,7 +116,7 @@
             "isRequired": true,
             "isHiddenWhenLocked": true,
             "id": "d3353f14-fca8-461f-b9a6-1c33e874030c",
-            "value": 5
+            "value": 6
           }
         ],
         "style": "above",
@@ -168,6 +168,34 @@
             "defaultValue": "value::all",
             "queryType": 0,
             "resourceType": "microsoft.operationalinsights/workspaces"
+          },
+          {
+            "id": "f4cceee2-5a06-4535-b220-543f818f0b3f",
+            "version": "KqlParameterItem/1.0",
+            "name": "_AlertSubtype",
+            "type": 2,
+            "description": "Show the AlertClassification selected",
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "\r\nlet _SnapshotTime = datetime({_SnapshotTime});\r\nlet _TargetBuild = \"{_TargetBuild}\";\r\nUCUpdateAlert\r\n| where TimeGenerated == _SnapshotTime\r\n| where UpdateCategory == \"WindowsQualityUpdate\" and TargetBuild == _TargetBuild\r\n| summarize by AlertSubtype",
+            "crossComponentResources": [
+              "{mappedWorkspace}"
+            ],
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "ALL",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
           }
         ],
         "style": "pills",
@@ -180,7 +208,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "let _SnapshotTime = datetime({_SnapshotTime});\r\nlet _TargetBuild = \"{_TargetBuild}\";\r\nlet _AlertClassification = \"{_AlertClassification}\";\r\nUCUpdateAlert\r\n| where TimeGenerated == _SnapshotTime\r\n| where TargetBuild == _TargetBuild\r\n| where AlertStatus == \"Active\" and UpdateCategory == \"WindowsQualityUpdate\"\r\n| where iff(_AlertClassification has \"ALL\", true, _AlertClassification has tostring(AlertClassification))\r\n| extend DescRecom = \"View more\"\r\n| summarize Devices=count() by AlertSubtype, AlertType, AlertClassification, TargetBuild, ErrorCode, DescRecom\r\n| project-reorder AlertSubtype, AlertClassification, ErrorCode, AlertType, Devices, DescRecom",
+        "query": "let _SnapshotTime = datetime({_SnapshotTime});\r\nlet _TargetBuild = \"{_TargetBuild}\";\r\nlet _AlertClassification = \"{_AlertClassification}\";\r\nlet _AlertSubtype = \"{_AlertSubtype}\";\r\nUCUpdateAlert\r\n| where TimeGenerated == _SnapshotTime\r\n| where TargetBuild == _TargetBuild\r\n| where AlertStatus == \"Active\" and UpdateCategory == \"WindowsQualityUpdate\"\r\n| where iff(_AlertClassification has \"ALL\", true, _AlertClassification has tostring(AlertClassification))\r\n| where iff(_AlertSubtype has \"ALL\", true, _AlertSubtype has tostring(AlertSubtype))\r\n| summarize Devices=count() by AlertSubtype, AlertType, AlertClassification, TargetBuild, ErrorCode\r\n| project-reorder AlertSubtype, AlertClassification, ErrorCode, AlertType, Devices\r\n| sort by Devices",
         "size": 2,
         "exportedParameters": [
           {
@@ -206,12 +234,8 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "$gen_group",
-              "formatter": 1
-            },
-            {
               "columnMatch": "AlertSubtype",
-              "formatter": 5,
+              "formatter": 1,
               "formatOptions": {
                 "linkTarget": "WorkbookTemplate",
                 "linkIsContextBlade": true,
@@ -478,21 +502,10 @@
               "formatter": 5
             }
           ],
-          "hierarchySettings": {
-            "treeType": 1,
-            "groupBy": [
-              "AlertSubtype"
-            ],
-            "expandTopLevel": true
-          },
           "labelSettings": [
             {
               "columnId": "AlertSubtype",
               "label": "AlertName"
-            },
-            {
-              "columnId": "DescRecom",
-              "label": "Description & Recommendation"
             }
           ]
         }
@@ -503,5 +516,9 @@
       }
     }
   ],
+  "fallbackResourceIds": [
+    "Azure Monitor"
+  ],
+  "fromTemplateId": "community-workbooks/UpdateCompliance/Alerts for target build",
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
