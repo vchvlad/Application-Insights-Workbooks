@@ -170,21 +170,19 @@
             "resourceType": "microsoft.operationalinsights/workspaces"
           },
           {
-            "id": "f4cceee2-5a06-4535-b220-543f818f0b3f",
+            "id": "e3e30872-b003-497a-9094-c7d996499670",
             "version": "KqlParameterItem/1.0",
             "name": "_AlertSubtype",
+            "label": "AlertSubtype",
             "type": 2,
             "description": "Show the AlertClassification selected",
             "isRequired": true,
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "\r\nlet _SnapshotTime = datetime({_SnapshotTime});\r\nlet _TargetBuild = \"{_TargetBuild}\";\r\nUCUpdateAlert\r\n| where TimeGenerated == _SnapshotTime\r\n| where UpdateCategory == \"WindowsQualityUpdate\" and TargetBuild == _TargetBuild\r\n| summarize by AlertSubtype",
+            "query": "\r\nlet _SnapshotTime = datetime({_SnapshotTime});\r\nlet _TargetBuild = \"{_TargetBuild}\";\r\nUCUpdateAlert\r\n| where TimeGenerated == _SnapshotTime\r\n| where UpdateCategory == \"WindowsQualityUpdate\" and TargetBuild == _TargetBuild and AlertStatus == \"Active\"\r\n| summarize by AlertSubtype",
             "crossComponentResources": [
               "{mappedWorkspace}"
-            ],
-            "value": [
-              "value::all"
             ],
             "typeSettings": {
               "additionalResourceOptions": [
@@ -515,9 +513,6 @@
         "margin": "-30px auto auto auto"
       }
     }
-  ],
-  "fallbackResourceIds": [
-    "Azure Monitor"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
