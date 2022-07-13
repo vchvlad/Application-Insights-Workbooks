@@ -259,7 +259,7 @@
                           }
                         }
                       },
-                      "showBorder": false
+                      "showBorder": true
                     }
                   },
                   "customWidth": "20",
@@ -340,7 +340,7 @@
                           }
                         }
                       },
-                      "showBorder": false
+                      "showBorder": true
                     }
                   },
                   "customWidth": "20",
@@ -424,7 +424,7 @@
                           }
                         }
                       },
-                      "showBorder": false
+                      "showBorder": true
                     }
                   },
                   "customWidth": "20",
